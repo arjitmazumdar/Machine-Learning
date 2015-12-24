@@ -1,0 +1,117 @@
+---
+title: "Practical Machine Learning"
+author: "Arjit"
+date: "December 22, 2015"
+output: html_document
+---
+
+## Objective : 
+
+Through this exercise we want to predict the manner 
+in which the subjects of personal activity test exercise. The dependent
+or the outcome variable is 'Classe'
+
+
+
+## Approach: 
+
+Following steps have been taken to achieve the result
+
+- **Importing** caret and other necessary packages
+
+- **Downloading** the test and train CSV files from website
+
+- **Reading** the files and creating data sets
+
+- **Performing** exploratory analysis
+
+- **Partitioning** the train data into 2 parts (using createDataPartition)
+function of the Caret Package
+
+- **Plooting** the predictors and **Summarising** the train dataset
+
+- **Running** rpart for prediction
+
+- **predicting** new values
+ 
+
+```{r}
+# Loading the right packages
+library(caret)
+library(ggplot2)
+library(rattle)
+
+## Downloading the CSv files from the link
+fileUrl1<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+fileUrl2<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+download.file(fileUrl1,destfile="./data/train.csv",method = "curl" )
+download.file(fileUrl2,destfile="./data/test.csv" , method = "curl" )
+datedownloaded<-date()
+
+## Reading the CSV files into dataframes
+
+trainData<-read.csv("./data/train.csv")
+testData<-read.csv("./data/test.csv")
+
+## Exploratory Data Analysis
+colnames(trainData)
+dim(trainData)
+dim(testData)
+summary(trainData$classe)
+
+qplot(classe,data=trainData, colour=trainData$classe, main ="Overview of Classe")
+
+## There are lots of columns with NA values
+## Getting rid of such columns in Test Dataframe
+
+cleaned_test_data<-testData[,which(unlist(lapply(testData, function(x)!all(is.na(x)))))]
+
+## There are lots of columns with NA values
+## Getting rid of such columns in Train Dataframe
+
+keep <- which(names(trainData) %in% names(cleaned_test_data))
+
+## Retaining the Classe variable 
+
+keep<-append(keep,160)
+cleaned_train_data<-trainData[,keep]
+
+## Partitioning the data 
+
+partioned_trained_data<-createDataPartition(y=cleaned_train_data$classe,p=0.7,list=FALSE)
+
+## Recreating Test and Train Data Set
+train_new<-cleaned_train_data[partioned_trained_data,]
+test_new<-cleaned_train_data[-partioned_trained_data,]
+
+summary(train_new)
+featurePlot(x=train_new[,c("roll_belt","pitch_belt","yaw_belt")],y=train_new$classe, plot="pairs")
+## The graph shows 3-4 clusters
+
+##qplot(classe,roll_belt,data=train_new,colour=classe)
+##qplot(classe,pitch_belt,data=train_new,colour=classe)
+##qplot(classe,yaw_belt,data=train_new,colour=classe)
+##qplot(classe,total_accel_belt,data=train_new,colour=classe)
+
+##tab1<-table(train_new$total_accel_belt,train_new$classe)
+##tab1
+##qplot(total_accel_belt,data=train_new,colour=classe,geom="density")
+##qplot(roll_belt,data=train_new,colour=classe,geom="density")
+##qplot(pitch_belt,data=train_new,colour=classe,geom="density")
+##qplot(yaw_accel_belt,data=train_new,colour=classe,geom="density")
+##qplot(total_accel_belt,data=train_new,colour=classe,geom="density")
+
+
+# Running the model
+# model_fit<-train(as.factor(classe)~.,data=train_new,method="rf")
+model_fit2<-train(as.factor(classe)~.,data=train_new,method="rpart")
+
+# Plotting the model
+fancyRpartPlot(model_fit2$finalModel)
+
+# Predicting new values
+
+predict(model_fit2,newdata = test_new)
+
+```
+

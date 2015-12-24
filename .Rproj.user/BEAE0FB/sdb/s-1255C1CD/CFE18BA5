@@ -1,0 +1,18 @@
+{
+    "contents" : "---\ntitle: \"Practical Machine Learning\"\nauthor: \"Arjit\"\ndate: \"December 22, 2015\"\noutput: html_document\n---\n\nThis is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.\n\nWhen you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\n```{r}\nlibrary(caret)\nfileUrl_1<-\"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv\"\nfileUrl_2<-\"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv\"\ndownload.file(fileUrl_1,destfile =\"./data/train.csv\" )\ndownload.file(fileUrl_2,destfile =\"./data/test.csv\" )\ndatedownloaded<-date()\n\ntrainData<-read.csv(\"./data/train.csv\")\ntestData<-read.csv(\"./data/test.csv\")\n\n\nset.seed(32323)\nFolded_trained_data<-createFolds(y=trainData$classe,k=21,list=TRUE)\n\ntrain_new<-trainData[partioned_trained_data,]\ntest_new<-trainData[-partioned_trained_data,]\n\n\n\n```\n\nYou can also embed plots, for example:\n\n```{r, echo=FALSE}\nplot(cars)\n```\n\nNote that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.\n",
+    "created" : 1450775486920.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2522853947",
+    "id" : "CFE18BA5",
+    "lastKnownWriteTime" : 1450783015,
+    "path" : "~/GitHub/Machine Learning/Machine_Learning.Rmd",
+    "project_path" : "Machine_Learning.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}
