@@ -28,6 +28,8 @@ Following steps have been taken to achieve the result
 - **Partitioning** the train data into 2 parts (using createDataPartition)
 function of the Caret Package
 
+- **Getting rid of extra variables** 
+
 - **Plooting** the predictors and **Summarising** the train dataset
 
 - **Running** rpart for prediction
@@ -54,40 +56,39 @@ trainData<-read.csv("./data/train.csv")
 testData<-read.csv("./data/test.csv")
 
 ## Exploratory Data Analysis
-colnames(trainData)
+##colnames(trainData)
 dim(trainData)
 dim(testData)
 summary(trainData$classe)
 
 qplot(classe,data=trainData, colour=trainData$classe, main ="Overview of Classe")
 
-## There are lots of columns with NA values
-## Getting rid of such columns in Test Dataframe
 
-cleaned_test_data<-testData[,which(unlist(lapply(testData, function(x)!all(is.na(x)))))]
+## Partitioning the data 
+
+partioned_trained_data<-createDataPartition(y=trainData$classe,p=0.7,list=FALSE)
+
+## Recreating Test and Train Data Set
+train_new<-trainData[partioned_trained_data,]
+test_new<-trainData[-partioned_trained_data,]
+## There are lots of columns with NA values
+## Getting rid of such columns in Test and train Dataframe
+
+cleaned_test_data<-test_new[, c(1,2,3,4,5,6,7,8,9,10,11,37,38,39,40,41,
+                                42,43,44,45,46,47,48,49,60,61,
+                                62,63,64,65,66,67,68,84,85,86)]
 
 ## There are lots of columns with NA values
 ## Getting rid of such columns in Train Dataframe
 
-keep <- which(names(trainData) %in% names(cleaned_test_data))
-
-## Retaining the Classe variable 
+keep <- which(names(train_new) %in% names(cleaned_test_data))
 
 keep<-append(keep,160)
-cleaned_train_data<-trainData[,keep]
+cleaned_train_data<-train_new[,keep]
 
-## Partitioning the data 
-
-partioned_trained_data<-createDataPartition(y=cleaned_train_data$classe,p=0.7,list=FALSE)
-
-## Recreating Test and Train Data Set
-train_new<-cleaned_train_data[partioned_trained_data,]
-test_new<-cleaned_train_data[-partioned_trained_data,]
-
-summary(train_new)
-featurePlot(x=train_new[,c("roll_belt","pitch_belt","yaw_belt")],y=train_new$classe, plot="pairs")
+summary(cleaned_train_data)
+featurePlot(x=cleaned_train_data[,c("roll_belt","pitch_belt","yaw_belt")],y=cleaned_train_data$classe, plot="pairs")
 ## The graph shows 3-4 clusters
-
 ##qplot(classe,roll_belt,data=train_new,colour=classe)
 ##qplot(classe,pitch_belt,data=train_new,colour=classe)
 ##qplot(classe,yaw_belt,data=train_new,colour=classe)
@@ -103,15 +104,26 @@ featurePlot(x=train_new[,c("roll_belt","pitch_belt","yaw_belt")],y=train_new$cla
 
 
 # Running the model
-# model_fit<-train(as.factor(classe)~.,data=train_new,method="rf")
-model_fit2<-train(as.factor(classe)~.,data=train_new,method="rpart")
+model_fit2<-train(as.factor(classe)~.,data=cleaned_train_data,method="rpart")
 
 # Plotting the model
 fancyRpartPlot(model_fit2$finalModel)
 
 # Predicting new values
 
-predict(model_fit2,newdata = test_new)
+##predict(model_fit2,newdata = cleaned_test_data)
+answers1<-predict(model_fit2,newdata = cleaned_test_data)
+answers <- predict(model_fit2,newdata = testData)
+
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE
+                )
+  }
+}
+pml_write_files(answers)
 
 ```
 
