@@ -1,0 +1,25 @@
+{
+    "contents" : "",
+    "created" : 1450782820876.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "28889839",
+    "lastKnownWriteTime" : 7011605692497750387,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "pub7x6tthm",
+        "caption" : "train_new",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=train_new&cache_key=pub7x6tthm",
+        "displayedObservations" : "13737",
+        "environment" : "",
+        "object" : "train_new",
+        "totalObservations" : "13737",
+        "variables" : "160"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}
