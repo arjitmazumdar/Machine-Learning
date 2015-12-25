@@ -104,7 +104,10 @@ featurePlot(x=cleaned_train_data[,c("roll_belt","pitch_belt","yaw_belt")],y=clea
 
 
 # Running the model
-model_fit2<-train(as.factor(classe)~.,data=cleaned_train_data,method="rpart")
+model_fit2<-train(as.factor(classe)~.,data=cleaned_train_data,method="rpart",preProcess= c("center","scale"))
+model_fit2
+
+
 
 # Plotting the model
 fancyRpartPlot(model_fit2$finalModel)
